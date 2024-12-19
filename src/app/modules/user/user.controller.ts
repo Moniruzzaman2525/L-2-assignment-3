@@ -1,11 +1,15 @@
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { userServices } from "./user.services";
 
 
-const createUser = catchAsync((req, res) => {
-    const {userData} = req.body
+const createUserController = catchAsync(async (req, res) => {
+    const userData = req.body
 
-    const result = 
+    console.log(userData);
+    
+
+    const result = await userServices.createUserIntoDB(userData)
 
     sendResponse(res, {
         success: true,
@@ -15,3 +19,8 @@ const createUser = catchAsync((req, res) => {
     })
 
 })
+
+
+export const userControllers = {
+    createUserController
+}
