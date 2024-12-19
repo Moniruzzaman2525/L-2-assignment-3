@@ -5,6 +5,10 @@ import validateRequest from '../../middleware/validateRequest'
 const router = express.Router()
 
 
-router.post('', validateRequest(userValidation.usserValidationSchema))
+router.post('/register', validateRequest(userValidation.usserValidationSchema))
 
 
+
+
+
+export const UserRoute = router
