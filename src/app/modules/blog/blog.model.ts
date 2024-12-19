@@ -9,11 +9,11 @@ const blogSchema = new Schema<TBlog>({
     content: {
         type: String,
         required: [true, 'Content is required'],
-        unique: true
     },
     author: {
         type: Schema.Types.ObjectId,
         required: true,
+        ref: 'User'
     },
     isPublished: {
         type: Boolean,

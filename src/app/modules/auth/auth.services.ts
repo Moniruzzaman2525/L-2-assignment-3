@@ -25,7 +25,7 @@ const createUserIntoDB = async (payload: TUser) => {
 }
 
 const loginUserServices = async (payload: TUserLogin) => {
-    const user = await AuthUser.isUserExistsByUserId(payload.email)
+    const user = await AuthUser.isUserExistsByEmail(payload.email)
     if (!user) {
         throw new AppError(404, 'This user is not found !')
     }
@@ -59,9 +59,7 @@ const refreshToken = async (token: string) => {
     const decoded = jwt.verify(token, config.jwt_refresh_secret as string) as JwtPayload
 
     const { email, iat } = decoded;
-
-    // checking if the user is exist
-    const user = await AuthUser.isUserExistsByUserId(email);
+    const user = await AuthUser.isUserExistsByEmail(email);
 
     if (!user) {
         throw new AppError(404, 'This user is not found !');

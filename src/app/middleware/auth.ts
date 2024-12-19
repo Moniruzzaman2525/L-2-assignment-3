@@ -22,7 +22,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
     const { role, email, iat} = decoded
 
-    const user = await AuthUser.isUserExistsByUserId(email)
+    const user = await AuthUser.isUserExistsByEmail(email)
 
     if (!user) {
       throw new AppError(404, 'This user is not found !');
