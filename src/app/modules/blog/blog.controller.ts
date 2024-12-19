@@ -31,9 +31,20 @@ const updateBlogController = catchAsync(async (req, res) => {
     const { _id, title, content, author } = result
     sendResponse(res, {
         success: true,
-        statusCode: 201,
+        statusCode: 200,
         message: 'Blog updated successfully',
         data:{_id, title, content, author}
+    })
+
+})
+const deleteBlogController = catchAsync(async (req, res) => {
+    const userData = req.user.email
+    const blogId = req.params.id
+    await blogServices.deleteBlogFromDB(userData, blogId)
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: 'Blog deleted successfully',
     })
 
 })
@@ -41,5 +52,6 @@ const updateBlogController = catchAsync(async (req, res) => {
 
 export const blogControllers = {
     createBlogController,
-    updateBlogController
+    updateBlogController,
+    deleteBlogController
 }
