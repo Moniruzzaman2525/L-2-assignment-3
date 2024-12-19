@@ -1,7 +1,7 @@
 import AppError from "../../error/AppError"
 import catchAsync from "../../utils/catchAsync"
 import sendResponse from "../../utils/sendResponse"
-import { blogServices } from "./blog.services"
+import { blogServices } from "./blogs.services"
 
 
 const createBlogController = catchAsync(async (req, res) => {
@@ -49,9 +49,22 @@ const deleteBlogController = catchAsync(async (req, res) => {
 
 })
 
+const getBlogsController = catchAsync(async (req, res) => {
+    const query = req.query;
+
+    const blogs = await blogServices.getAllBlogsFromDB(query);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: 'Blogs fetched successfully',
+        data: blogs,
+    });
+});
 
 export const blogControllers = {
     createBlogController,
     updateBlogController,
-    deleteBlogController
+    deleteBlogController,
+    getBlogsController
 }

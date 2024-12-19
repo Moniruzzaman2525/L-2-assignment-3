@@ -14,6 +14,7 @@ const createUserIntoDB = async (payload: TUser) => {
         session.startTransaction()
         // payload.id = await generatedStudentId()
         const newUser = await AuthUser.create([payload], {session})
+        
         if (!newUser) {
             throw new AppError(400, 'Failed to create user !'); 
         }

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { TBlog } from "./blog.interface";
+import { TBlog } from "./blogs.interface";
 
 const blogSchema = new Schema<TBlog>({
     title: {

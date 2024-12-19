@@ -1,8 +1,10 @@
 import mongoose, { Schema } from "mongoose"
-import { TBlog } from "./blog.interface"
-import { Blog } from "./blog.model"
+import { TBlog } from "./blogs.interface"
+import { Blog } from "./blogs.model"
 import AppError from "../../error/AppError"
 import { AuthUser } from "../auth/auth.model"
+import QueryBuilder from "../../builder/QueryBuilder"
+import { BlogSearchableFields } from "./blogs.constant"
 
 
 
@@ -49,8 +51,8 @@ const updateBlogFromDB = async (payload: TBlog, userEmail: string, id: string) =
             id,
             { ...payload },
             { new: true, session },
-          ).populate('author')
-       
+        ).populate('author')
+
         await session.commitTransaction()
         await session.endSession()
         return updateBlog
@@ -79,7 +81,7 @@ const deleteBlogFromDB = async (userEmail: string, id: string) => {
             throw new AppError(403, 'You are not authorized to update this blog !');
         }
         const deleteBlog = await Blog.findByIdAndDelete(id)
-       
+
         await session.commitTransaction()
         await session.endSession()
         return deleteBlog
@@ -91,8 +93,27 @@ const deleteBlogFromDB = async (userEmail: string, id: string) => {
 }
 
 
+const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
+    const blogQuery = new QueryBuilder(
+        Blog.find().populate('author', 'name email'),
+        query
+    )
+        .search(BlogSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+
+    const result = await blogQuery.modelQuery;
+    return result;
+};
+
+
+
 export const blogServices = {
     createBlogIntoDB,
     updateBlogFromDB,
-    deleteBlogFromDB
+    deleteBlogFromDB,
+    getAllBlogsFromDB
 }
