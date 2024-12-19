@@ -8,7 +8,7 @@ const createBlogValidationSchema = z.object({
     .string({
       required_error: "Content is required",
     }),
-  author: z.string(),
+  author: z.string().optional(),
   isPublished: z.string().optional(),
 });
  

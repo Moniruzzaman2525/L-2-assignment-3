@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.post('/register', validateRequest(userValidation.userValidationSchema), userControllers.createUserController)
 router.post('/login', validateRequest(userValidation.userValidationLoginSchema), userControllers.loginUserController)
+router.post('/refresh-token', validateRequest(userValidation.refreshTokenValidationSchema), userControllers.refreshToken)
 
 
 export const UserRoute = router

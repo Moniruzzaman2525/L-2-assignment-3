@@ -20,9 +20,9 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check if the token is valid
     const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload
 
-    const { role, userId, iat} = decoded
+    const { role, email, iat} = decoded
 
-    const user = await AuthUser.findById(userId)
+    const user = await AuthUser.isUserExistsByUserId(email)
 
     if (!user) {
       throw new AppError(404, 'This user is not found !');

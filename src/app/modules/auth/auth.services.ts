@@ -3,7 +3,7 @@ import { TUser, TUserLogin } from "./auth.interface";
 import { AuthUser } from "./auth.model";
 import AppError from "../../error/AppError";
 // import { generatedStudentId } from "./auth.utils";
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from "../../config";
 import { createToken } from "./auth.utils";
 
@@ -42,18 +42,54 @@ const loginUserServices = async (payload: TUserLogin) => {
 
     // create token and sent to the user
     const jwtPaylod = {
-        userId: user._id as mongoose.Types.ObjectId,
+        email: user.email,
         role: user.role as string
     }
 
     const accessToken = createToken(jwtPaylod, config.jwt_access_secret as string, config.jwt_access_expires_in as string)
-    const refreshToken = createToken(jwtPaylod, config.jwt_access_secret as string, config.jwt_refresh_expires_in as string)
+    const refreshToken = createToken(jwtPaylod, config.jwt_refresh_secret as string, config.jwt_refresh_expires_in as string)
 
-    return { accessToken , refreshToken}
+    return { accessToken, refreshToken }
 
 }
 
-export const userServices = {
+
+const refreshToken = async (token: string) => {
+
+    const decoded = jwt.verify(token, config.jwt_refresh_secret as string) as JwtPayload
+
+    const { email, iat } = decoded;
+
+    // checking if the user is exist
+    const user = await AuthUser.isUserExistsByUserId(email);
+
+    if (!user) {
+        throw new AppError(404, 'This user is not found !');
+      }
+  
+      if (user?.isBlocked) {
+        throw new AppError(401, 'This user is blocked !');
+      }
+
+    const jwtPayload = {
+        email: user.email,
+        role: user.role as string,
+    };
+
+    const accessToken = createToken(
+        jwtPayload,
+        config.jwt_access_secret as string,
+        config.jwt_access_expires_in as string,
+    );
+
+    return {
+        accessToken,
+    };
+};
+
+
+export const authUserServices = {
     createUserIntoDB,
-    loginUserServices
+    loginUserServices,
+    refreshToken
 }

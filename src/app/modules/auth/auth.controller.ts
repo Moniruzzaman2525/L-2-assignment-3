@@ -1,12 +1,12 @@
 import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { userServices } from "./auth.services";
+import { authUserServices } from "./auth.services";
 
 
 const createUserController = catchAsync(async (req, res) => {
     const userData = req.body
-    const result = await userServices.createUserIntoDB(userData)
+    const result = await authUserServices.createUserIntoDB(userData)
     const { name, email, _id } = result
     sendResponse(res, {
         success: true,
@@ -19,9 +19,9 @@ const createUserController = catchAsync(async (req, res) => {
 
 const loginUserController = catchAsync(async (req, res) => {
     const loginUserData = req.body
-    const result = await userServices.loginUserServices(loginUserData)
+    const result = await authUserServices.loginUserServices(loginUserData)
 
-    const { refreshToken } = result
+    const { refreshToken, accessToken } = result
 
     res.cookie('refreshToken', refreshToken, {
         secure: config.NODE_ENV === 'production',
@@ -33,13 +33,29 @@ const loginUserController = catchAsync(async (req, res) => {
         statusCode: 200,
         message: 'Login successful',
         data: {
-            token: result
+            token: accessToken
         }
     })
 })
 
 
+const refreshToken = catchAsync(async (req, res) => {
+    const { refreshToken } = req.cookies;
+    console.log(refreshToken);
+    
+    const result = await authUserServices.refreshToken(refreshToken);
+
+  
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Access token is retrieved succesfully!',
+      data: result,
+    });
+  });
+
 export const userControllers = {
     createUserController,
-    loginUserController
+    loginUserController,
+    refreshToken
 }
