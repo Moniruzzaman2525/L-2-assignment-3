@@ -4,6 +4,11 @@ import bcrypt from 'bcrypt'
 import config from "../../config";
 
 const userSchema = new Schema<TUser, UserModel>({
+    // id: {
+    //     type: String,
+    //     required: true,
+    //     unique: true
+    // },
     name: {
         type: String,
         required: [true, 'Name is required']
@@ -47,7 +52,7 @@ userSchema.post('save', async function (doc, next) {
 
 
 userSchema.statics.isUserExistsByUserId = async function (email) {
-    return await Auth.findOne({email})
+    return await Auth.findOne({email: email}).select('+password')
 }
 
 userSchema.statics.isPasswordMatch = async function (plainTextPassword, hashPassword) {

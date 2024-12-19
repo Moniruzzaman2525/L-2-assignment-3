@@ -19,6 +19,14 @@ const createUserController = catchAsync(async (req, res) => {
 const loginUserController = catchAsync(async (req, res) => {
     const loginUserData = req.body
     const result = await userServices.loginUserServices(loginUserData)
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: 'Login successful',
+        data: {
+            token: result
+        }
+    })
 })
 
 
