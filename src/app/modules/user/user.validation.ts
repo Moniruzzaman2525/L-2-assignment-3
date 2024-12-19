@@ -2,7 +2,7 @@
 
 import {z} from 'zod'
 
-export const usserValidationSchema = z.object({
+const usserValidationSchema = z.object({
     name: z.string({
         required_error: 'Name is required'
     }),
@@ -15,3 +15,8 @@ export const usserValidationSchema = z.object({
     role: z.enum(['admin', 'user']).default('user'),
     isBlocked: z.boolean().default(false)
 })
+
+
+export const userValidation = {
+    usserValidationSchema
+}
