@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { TUser, TUserLogin } from "./auth.interface";
-import { Auth } from "./auth.model";
+import { AuthUser } from "./auth.model";
 import AppError from "../../error/AppError";
 // import { generatedStudentId } from "./auth.utils";
 import jwt from 'jsonwebtoken';
 import config from "../../config";
+import { createToken } from "./auth.utils";
 
 const createUserIntoDB = async (payload: TUser) => {
     const session = await mongoose.startSession()
@@ -12,7 +13,7 @@ const createUserIntoDB = async (payload: TUser) => {
     try {
         session.startTransaction()
         // payload.id = await generatedStudentId()
-        const newUser = await Auth.create(payload)
+        const newUser = await AuthUser.create(payload)
         await session.commitTransaction()
         await session.endSession()
         return newUser
@@ -24,11 +25,11 @@ const createUserIntoDB = async (payload: TUser) => {
 }
 
 const loginUserServices = async (payload: TUserLogin) => {
-    const user = await Auth.isUserExistsByUserId(payload.email)
+    const user = await AuthUser.isUserExistsByUserId(payload.email)
     if (!user) {
         throw new AppError(404, 'This user is not found !')
     }
-    const passMatch = await Auth.isPasswordMatch(payload.password, user.password)
+    const passMatch = await AuthUser.isPasswordMatch(payload.password, user.password)
 
     if (!passMatch) {
         throw new AppError(403, 'Invalid credentials')
@@ -41,16 +42,14 @@ const loginUserServices = async (payload: TUserLogin) => {
 
     // create token and sent to the user
     const jwtPaylod = {
-        role: user.role
+        userId: user._id as mongoose.Types.ObjectId,
+        role: user.role as string
     }
 
-    const accessToken = jwt.sign(
-        jwtPaylod, config.jwt_access_secret as string, {
-            expiresIn: '10d'
-        }
-    )
+    const accessToken = createToken(jwtPaylod, config.jwt_access_secret as string, config.jwt_access_expires_in as string)
+    const refreshToken = createToken(jwtPaylod, config.jwt_access_secret as string, config.jwt_refresh_expires_in as string)
 
-    return accessToken
+    return { accessToken , refreshToken}
 
 }
 

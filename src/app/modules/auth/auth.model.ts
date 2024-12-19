@@ -52,7 +52,7 @@ userSchema.post('save', async function (doc, next) {
 
 
 userSchema.statics.isUserExistsByUserId = async function (email) {
-    return await Auth.findOne({email: email}).select('+password')
+    return await AuthUser.findOne({email: email}).select('+password')
 }
 
 userSchema.statics.isPasswordMatch = async function (plainTextPassword, hashPassword) {
@@ -60,4 +60,4 @@ userSchema.statics.isPasswordMatch = async function (plainTextPassword, hashPass
 }
 
 
-export const Auth = model<TUser, UserModel>("User", userSchema)
+export const AuthUser = model<TUser, UserModel>("User", userSchema)

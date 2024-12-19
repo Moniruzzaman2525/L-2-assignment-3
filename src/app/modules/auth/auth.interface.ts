@@ -1,8 +1,9 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
+import { USER_ROLE } from "./auth.constant";
 
 
 export interface TUser {
-    // id: string;
+    _id?: Types.ObjectId;
     name: string;
     email: string;
     password: string;
@@ -20,3 +21,5 @@ export type TUserLogin = {
     email: string;
     password: string
 }
+
+export type TUserRole = keyof typeof USER_ROLE
