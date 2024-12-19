@@ -6,21 +6,23 @@ import { userServices } from "./auth.services";
 const createUserController = catchAsync(async (req, res) => {
     const userData = req.body
     const result = await userServices.createUserIntoDB(userData)
-
-    // console.log(userData);
-    // console.log(result);
-    
-
+    const {name, email, _id} = result
     sendResponse(res, {
         success: true,
         statusCode: 201,
         message: 'User registered successfully',
-        data: result
+        data: {name, email, _id}
     })
 
 })
 
+const loginUserController = catchAsync(async (req, res) => {
+    const loginUserData = req.body
+    const result = await userServices.loginUserServices(loginUserData)
+})
+
 
 export const userControllers = {
-    createUserController
+    createUserController,
+    loginUserController
 }
