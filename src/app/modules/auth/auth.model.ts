@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { TUser } from "./user.interface";
+import { TUser } from "./auth.interface";
 
 
 const userSchema = new Schema<TUser>({
@@ -30,4 +30,5 @@ const userSchema = new Schema<TUser>({
 })
 
 
-export const User = model<TUser>("User", userSchema)
+
+export const Auth = model<TUser>("User", userSchema)
