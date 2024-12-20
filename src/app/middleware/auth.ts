@@ -7,7 +7,6 @@ import { TUserRole } from "../modules/auth/auth.interface";
 import { AuthUser } from "../modules/auth/auth.model";
 
 
-
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
@@ -20,7 +19,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check if the token is valid
     const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload
 
-    const { role, email, iat} = decoded
+    const { role, email, iat} = decoded    
 
     const user = await AuthUser.isUserExistsByEmail(email)
 
