@@ -3,7 +3,7 @@ import catchAsync from "../../utils/catchAsync"
 import sendResponse from "../../utils/sendResponse"
 import { blogServices } from "./blogs.services"
 
-
+// create blog controller
 const createBlogController = catchAsync(async (req, res) => {
     const blogData = req.body
 
@@ -19,6 +19,8 @@ const createBlogController = catchAsync(async (req, res) => {
     })
 
 })
+
+// update blog contoller
 const updateBlogController = catchAsync(async (req, res) => {
     const blogData = req.body
     const userData = req.user.email
@@ -37,6 +39,8 @@ const updateBlogController = catchAsync(async (req, res) => {
     })
 
 })
+
+// delete blog controller
 const deleteBlogController = catchAsync(async (req, res) => {
     const userData = req.user.email
     const blogId = req.params.id
@@ -49,11 +53,12 @@ const deleteBlogController = catchAsync(async (req, res) => {
 
 })
 
+
+// get all blog controller
 const getBlogsController = catchAsync(async (req, res) => {
     const query = req.query;
 
     const blogs = await blogServices.getAllBlogsFromDB(query);
-
     sendResponse(res, {
         success: true,
         statusCode: 200,

@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { TBlog } from "./blogs.interface";
+import { BlogModel, TBlog } from "./blogs.interface";
 
-const blogSchema = new Schema<TBlog>({
+const blogSchema = new Schema<TBlog, BlogModel>({
     title: {
         type: String,
         required: [true, 'Title is required']
@@ -23,5 +23,10 @@ const blogSchema = new Schema<TBlog>({
     timestamps: true,
 })
 
+// checking blog using id
+blogSchema.statics.isUserExistsById = async function (id) {
+    return await Blog.findById(id)
+}
 
-export const Blog = model<TBlog>("Blog", blogSchema)
+
+export const Blog = model<TBlog, BlogModel>("Blog", blogSchema)

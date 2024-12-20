@@ -7,6 +7,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from "../../config";
 import { createToken } from "./auth.utils";
 
+
+// create user services
 const createUserIntoDB = async (payload: TUser) => {
     const session = await mongoose.startSession()
 
@@ -24,10 +26,11 @@ const createUserIntoDB = async (payload: TUser) => {
     } catch (error: any) {
         await session.abortTransaction()
         await session.endSession()
-        throw new AppError(500, error)
+        throw new AppError(400, error)
     }
 }
 
+// login user services
 const loginUserServices = async (payload: TUserLogin) => {
     const user = await AuthUser.isUserExistsByEmail(payload.email)
     if (!user) {
@@ -57,7 +60,7 @@ const loginUserServices = async (payload: TUserLogin) => {
 
 }
 
-
+// refresh token services 
 const refreshToken = async (token: string) => {
 
     const decoded = jwt.verify(token, config.jwt_refresh_secret as string) as JwtPayload

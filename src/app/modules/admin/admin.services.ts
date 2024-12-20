@@ -1,9 +1,10 @@
 import mongoose from "mongoose"
 import { AuthUser } from "../auth/auth.model"
 import AppError from "../../error/AppError"
+import { Blog } from "../blogs/blogs.model"
 
-
-const updateBlogFromDB = async (id: string) => {
+// user block services
+const adminBlockUserFromDB = async (id: string) => {
     const session = await mongoose.startSession()
 
     try {
@@ -29,6 +30,31 @@ const updateBlogFromDB = async (id: string) => {
     }
 }
 
+// blog delete services
+const adminBlogDeleteFromDB = async (id: string) => {
+    const session = await mongoose.startSession()
+
+    try {
+        session.startTransaction()
+        const blog = await Blog.isUserExistsById(id)
+        if (!blog) {
+            throw new AppError(404, 'Blog not found !')
+        }
+        const deleteBlog = await Blog.findByIdAndDelete(id)
+        
+        await session.commitTransaction()
+        await session.endSession()
+        return deleteBlog
+    } catch (error: any) {
+        await session.abortTransaction()
+        await session.endSession()
+        console.log(error);
+        
+        throw new AppError(500, error)
+    }
+}
+
 export const adminServices = {
-    updateBlogFromDB
+    adminBlockUserFromDB,
+    adminBlogDeleteFromDB
 }

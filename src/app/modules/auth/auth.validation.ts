@@ -1,6 +1,7 @@
 
 import { z } from "zod";
 
+// create user validation schema
 const userValidationSchema = z.object({
   body: z.object({
     name: z.string({
@@ -19,7 +20,7 @@ const userValidationSchema = z.object({
   })
 });
 
-
+// update user validation schema
 const userValidationLoginSchema = z.object({
  body: z.object({
   email: z.string({
@@ -31,6 +32,8 @@ const userValidationLoginSchema = z.object({
  })
 })
 
+
+// refresh token validation schema
 const refreshTokenValidationSchema = z.object({
   cookies: z.object({
     refreshToken: z.string({

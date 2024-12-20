@@ -4,7 +4,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { authUserServices } from "./auth.services";
 
-
+// create user controller
 const createUserController = catchAsync(async (req, res) => {
     const userData = req.body
     const result = await authUserServices.createUserIntoDB(userData)
@@ -18,6 +18,7 @@ const createUserController = catchAsync(async (req, res) => {
 
 })
 
+// login user controller
 const loginUserController = catchAsync(async (req, res) => {
     const loginUserData = req.body
     const result = await authUserServices.loginUserServices(loginUserData)
@@ -39,7 +40,7 @@ const loginUserController = catchAsync(async (req, res) => {
     })
 })
 
-
+// refresh token controller
 const refreshToken = catchAsync(async (req, res) => {
     const { refreshToken } = req.cookies;
     const result = await authUserServices.refreshToken(refreshToken);

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 
 export type TBlog = {
@@ -6,4 +6,8 @@ export type TBlog = {
     content: string;
     author: Types.ObjectId;
     isPublished?: boolean;
+}
+
+export interface BlogModel extends Model<TBlog> {
+    isUserExistsById(email: string): Promise<TBlog>
 }

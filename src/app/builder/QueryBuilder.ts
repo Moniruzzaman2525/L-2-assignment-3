@@ -1,4 +1,6 @@
-import { FilterQuery, Query } from 'mongoose';
+
+import { FilterQuery, Query } from "mongoose";
+
 
 class QueryBuilder<T> {
     public modelQuery: Query<T[], T>;
@@ -10,7 +12,7 @@ class QueryBuilder<T> {
     }
 
     search(searchableFields: string[]) {
-        const searchTerm = this.query.searchTerm as string;
+        const searchTerm = this.query.search as string; 
         if (searchTerm) {
             this.modelQuery = this.modelQuery.find({
                 $or: searchableFields.map(
@@ -27,7 +29,11 @@ class QueryBuilder<T> {
     filter() {
         const queryObj = { ...this.query };
 
-        const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields']; 
+        if (this.query.filter) {
+            queryObj.author = this.query.filter;
+        }
+
+        const excludeFields = ['search', 'sortBy', 'sortOrder', 'limit', 'page', 'fields', 'filter'];
         excludeFields.forEach((el) => delete queryObj[el]);
 
         this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
@@ -35,26 +41,24 @@ class QueryBuilder<T> {
     }
 
     sort() {
-        const sortField = this.query.sort as string;
-        const sort = sortField ? sortField.split(',').join(' ') : '-createdAt'; 
-        this.modelQuery = this.modelQuery.sort(sort);
+        const sortField = this.query.sortBy as string || 'createdAt'; 
+        const sortOrder = this.query.sortOrder === 'asc' ? '' : '-';  
+        this.modelQuery = this.modelQuery.sort(`${sortOrder}${sortField}`);
         return this;
     }
 
-    
     paginate() {
-        const page = Number(this.query.page) || 1; 
-        const limit = Number(this.query.limit) || 10; 
+        const page = Number(this.query.page) || 1;
+        const limit = Number(this.query.limit) || 10;
         const skip = (page - 1) * limit;
 
         this.modelQuery = this.modelQuery.skip(skip).limit(limit);
         return this;
     }
 
-    
     fields() {
         const fields = this.query.fields as string;
-        const selectFields = fields ? fields.split(',').join(' ') : '-__v'; 
+        const selectFields = fields ? fields.split(',').join(' ') : '-__v';
 
         this.modelQuery = this.modelQuery.select(selectFields);
         return this;

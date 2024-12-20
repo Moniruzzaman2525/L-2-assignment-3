@@ -7,7 +7,7 @@ import QueryBuilder from "../../builder/QueryBuilder"
 import { BlogSearchableFields } from "./blogs.constant"
 
 
-
+// create blog services
 const createBlogIntoDB = async (payload: TBlog, userEmail: string) => {
     const session = await mongoose.startSession()
 
@@ -26,9 +26,11 @@ const createBlogIntoDB = async (payload: TBlog, userEmail: string) => {
     } catch (error: any) {
         await session.abortTransaction()
         await session.endSession()
-        throw new AppError(500, error)
+        throw new AppError(400, error)
     }
 }
+
+// update blog services
 const updateBlogFromDB = async (payload: TBlog, userEmail: string, id: string) => {
     const session = await mongoose.startSession()
 
@@ -59,9 +61,11 @@ const updateBlogFromDB = async (payload: TBlog, userEmail: string, id: string) =
     } catch (error: any) {
         await session.abortTransaction()
         await session.endSession()
-        throw new AppError(500, error)
+        throw new AppError(400, error)
     }
 }
+
+// delete blog services
 const deleteBlogFromDB = async (userEmail: string, id: string) => {
     const session = await mongoose.startSession()
 
@@ -72,7 +76,7 @@ const deleteBlogFromDB = async (userEmail: string, id: string) => {
         if (!user || !user._id) {
             throw new AppError(404, 'User not found !')
         }
-        const blog = await Blog.findById(id).session(session)
+        const blog = await Blog.isUserExistsById(id)
         if (!blog) {
             throw new AppError(404, 'Blog not found !')
         }
@@ -88,25 +92,36 @@ const deleteBlogFromDB = async (userEmail: string, id: string) => {
     } catch (error: any) {
         await session.abortTransaction()
         await session.endSession()
-        throw new AppError(500, error)
+        throw new AppError(400, error)
     }
 }
 
-
+// get all blog services
 const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
-    const blogQuery = new QueryBuilder(
-        Blog.find().populate('author', 'name email'),
-        query
-    )
-        .search(BlogSearchableFields)
-        .filter()
-        .sort()
-        .paginate()
-        .fields();
+    const session = await mongoose.startSession()
+    try {
+        session.startTransaction()
+        const blogQuery = new QueryBuilder(
+            Blog.find().populate('author', 'name email'),
+            query
+        )
+            .search(BlogSearchableFields)
+            .filter()
+            .sort()
+            .paginate()
+            .fields();
+    
+    
+        const result = await blogQuery.modelQuery;
 
-
-    const result = await blogQuery.modelQuery;
-    return result;
+        await session.commitTransaction()
+        await session.endSession()
+        return result;
+    } catch (error: any) {
+        await session.abortTransaction()
+        await session.endSession()
+        throw new AppError(400, error)
+    }
 };
 
 

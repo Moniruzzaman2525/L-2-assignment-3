@@ -7,6 +7,8 @@ import { USER_ROLE } from '../auth/auth.constant'
 
 const router = exporss.Router()
 
-router.patch('/users/:userId/block', auth(USER_ROLE.admin), adminController.userBlogController)
+// admin routes
+router.patch('/users/:userId/block', auth(USER_ROLE.admin), adminController.userBlockController)
+router.delete('/blogs/:id', auth(USER_ROLE.admin), adminController.adminBlogDeleteController)
 
 export const AdminRoute = router

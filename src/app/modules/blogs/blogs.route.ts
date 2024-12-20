@@ -7,6 +7,7 @@ import { USER_ROLE } from '../auth/auth.constant'
 
 const router = express.Router()
 
+// blog routes
 router.post('/', auth(USER_ROLE.admin, USER_ROLE.user), validateRequest(blogValidation.createBlogValidationSchema),  blogControllers.createBlogController)
 router.patch('/:id', auth(USER_ROLE.admin, USER_ROLE.user), validateRequest(blogValidation.updateBlogValidationSchema),  blogControllers.updateBlogController)
 router.delete('/:id', auth(USER_ROLE.admin, USER_ROLE.user), blogControllers.deleteBlogController)
