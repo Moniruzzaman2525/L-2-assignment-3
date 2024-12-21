@@ -13,7 +13,6 @@ const createBlogIntoDB = async (payload: TBlog, userEmail: string) => {
 
     try {
         session.startTransaction()
-
         const user = await AuthUser.isUserExistsByEmail(userEmail)
         if (!user || !user._id) {
             throw new AppError(404, 'User not found !')
