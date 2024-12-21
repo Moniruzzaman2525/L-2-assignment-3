@@ -14,7 +14,8 @@ const userValidationSchema = z.object({
       .email("Invalid email format"),
     password: z.string({
       required_error: "Password is required",
-    }),
+    }).min(4, "Password must be at least 4 characters long")
+      .max(20, "Password must not exceed 20 characters"),
     role: z.enum(["admin", "user"]).default("user"),
     isBlocked: z.boolean().default(false),
   })
@@ -22,14 +23,14 @@ const userValidationSchema = z.object({
 
 // update user validation schema
 const userValidationLoginSchema = z.object({
- body: z.object({
-  email: z.string({
-    required_error: 'Email is required'
-  }),
-  password: z.string({
-    required_error: 'Password is required'
+  body: z.object({
+    email: z.string({
+      required_error: 'Email is required'
+    }),
+    password: z.string({
+      required_error: 'Password is required'
+    })
   })
- })
 })
 
 

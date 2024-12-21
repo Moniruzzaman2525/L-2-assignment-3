@@ -75,18 +75,6 @@ To start the production mode:
 npm run start:prod
 ```
 
-format code:
-
-```bash
-npm run format
-```
-
-Automatically fix linting:
-
-```bash
-npm run lint:fix
-```
-
 ## API Endpoints
 
 1. Register User: `POST` `/api/auth/register`
