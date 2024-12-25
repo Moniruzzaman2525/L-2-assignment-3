@@ -9,7 +9,14 @@ import { AuthUser } from "../modules/auth/auth.model";
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new AppError(401, 'You are not authorized!');
+    }
+    
+    const token = authHeader.split(' ')[1];
+    
 
     // if the token is send from client
     if (!token) {
@@ -19,7 +26,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check if the token is valid
     const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload
 
-    const { role, email, iat} = decoded
+    const { role, email, iat } = decoded
     const user = await AuthUser.isUserExistsByEmail(email)
 
     if (!user) {
